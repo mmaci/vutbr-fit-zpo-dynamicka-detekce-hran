@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
+    <width>1225</width>
     <height>633</height>
    </rect>
   </property>
@@ -17,8 +17,8 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>1</x>
-      <y>1</y>
+      <x>480</x>
+      <y>0</y>
       <width>261</width>
       <height>571</height>
      </rect>
@@ -36,36 +36,82 @@
       </rect>
      </property>
      <property name="text">
-      <string>Load image</string>
+      <string>Detekuj hrany</string>
      </property>
     </widget>
    </widget>
-   <widget class="QLabel" name="displayArea">
+   <widget class="QLabel" name="imgVstup">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>10</y>
-      <width>471</width>
-      <height>561</height>
+      <x>10</x>
+      <y>30</y>
+      <width>461</width>
+      <height>541</height>
      </rect>
     </property>
     <property name="text">
      <string/>
     </property>
    </widget>
-   <zorder>gridLayoutWidget</zorder>
-   <zorder>displayArea</zorder>
-   <zorder>displayArea</zorder>
+   <widget class="QLabel" name="imgVystup">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>30</y>
+      <width>461</width>
+      <height>531</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>46</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Vstup:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>10</y>
+      <width>46</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Výstup:</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>751</width>
+     <width>1225</width>
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuSoubor">
+    <property name="title">
+     <string>Soubor</string>
+    </property>
+    <addaction name="actionOtev_t"/>
+    <addaction name="actionUlo_it"/>
+    <addaction name="separator"/>
+    <addaction name="actionKonec"/>
+   </widget>
+   <addaction name="menuSoubor"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -76,6 +122,21 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOtev_t">
+   <property name="text">
+    <string>Otevřít vstup</string>
+   </property>
+  </action>
+  <action name="actionUlo_it">
+   <property name="text">
+    <string>Uložit výstup</string>
+   </property>
+  </action>
+  <action name="actionKonec">
+   <property name="text">
+    <string>Konec</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
