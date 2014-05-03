@@ -13,8 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    dynamicedgedetector.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    edgedetector.h \
+    dynamicedgedetector.h
 
 FORMS    += mainwindow.ui

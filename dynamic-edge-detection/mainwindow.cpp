@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+    ui->setupUi(this);        
 }
 
 MainWindow::~MainWindow()
@@ -19,12 +19,20 @@ void MainWindow::on_pushButton_clicked()
 
    //QPixmap pix = ui->imgVstup->pixmap();
 
-    vystupImage = vstupImage;//kvuli alokaci rozmeru - asi jde jinak
-    for(int x=0; x < vstupImage.width(); x++)
+    outImage = inImage;//kvuli alokaci rozmeru - asi jde jinak
+
+    DynamicEdgeDetector det(&outImage, inImage.width(), inImage.height());
+
+    det.calc();
+    det.backwardTrack();
+
+    /*
+
+    for (uint8_t x = 0; x < inImage.width(); x++)
     {
-        for(int y=0; y < vstupImage.height(); y++)
+        for(uint8_t y = 0; y < inImage.height(); y++)
         {
-            QColor pixlik(vstupImage.pixel(x,y));
+            QColor pixlik(inImage.pixel(x,y));
             //tady nejaka funkce
             //.........
             int r,g,b;
@@ -33,11 +41,10 @@ void MainWindow::on_pushButton_clicked()
             b = 255 - pixlik.blue();
             //.........
             QColor vystup(r,g,b);
-            vystupImage.setPixel(x,y,vystup.rgb());
+            outImage.setPixel(x,y,vystup.rgb());
         }
-
-    }
-    QPixmap pix = QPixmap::fromImage(vystupImage);
+    }*/
+    QPixmap pix = QPixmap::fromImage(outImage);
     ui->imgVystup->setPixmap(pix.scaled(ui->imgVystup->width(),ui->imgVystup->height(),Qt::KeepAspectRatio));
 
 }
@@ -45,7 +52,7 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_actionUlo_it_triggered()
 {
   QString filename = QFileDialog::getSaveFileName(this, tr("Save File ..."),"","*.jpg");
-  vystupImage.save(filename,"JPEG");
+  outImage.save(filename,"JPEG");
 
 }
 
@@ -53,10 +60,10 @@ void MainWindow::on_actionOtev_t_triggered()
 {
     QString filename = QFileDialog::getOpenFileName(this, tr("Open File ..."),"","*.jpg");
 
-    vstupImage.load(filename);
+    inImage.load(filename);
 //p.scaled(w,h,Qt::KeepAspectRatio
 
-    QPixmap pix = QPixmap::fromImage(vstupImage);
+    QPixmap pix = QPixmap::fromImage(inImage);
     ui->imgVstup->setPixmap(pix.scaled(ui->imgVstup->width(),ui->imgVstup->height(),Qt::KeepAspectRatio));
 }
 
