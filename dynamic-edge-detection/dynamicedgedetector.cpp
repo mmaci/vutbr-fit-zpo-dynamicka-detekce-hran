@@ -87,25 +87,20 @@ void DynamicEdgeDetector::forwardScan() {
 // this is just a temporary for one edge to detect
 void DynamicEdgeDetector::backwardTrack() {
 
-    int32_t minCost = INT_MAX;
-    uint32_t minIndex;
+
     for (uint32_t y = 0; y < getHeight(); ++y) {
-        if (_accumulated[y] < minCost) {
-            minIndex = y;
-            minCost = _accumulated[y];
-        }
-    }
 
     QImage* image = getImage();
     uint32_t x_i = 0;
-    uint32_t y_i = minIndex;
+    uint32_t y_i = y;
     uint32_t nextIndex;
     for (uint32_t x = 0; x < getWidth(); ++x) {
-        QRgb color = qRgb(255, 0, 0);
+        QRgb color = qRgb(0, 255, 0);
         image->setPixel(x_i, y_i, color);
         nextIndex = _fwdScanPtrs[x_i * getHeight() + y_i];
         y_i = nextIndex % getHeight();
         x_i = nextIndex / getHeight();
+    }
     }
 }
 
