@@ -5,6 +5,7 @@
 #include <QColor>
 #include <cstdint>
 #include <cmath>
+#include <stdint.h>
 
 #include "edgedetector.h"
 
@@ -27,7 +28,8 @@ enum Colors {
 enum PixelType {
     RGB,
     CMYK,
-    GRAYSCALE
+    GRAYSCALE,
+    MYTEST
 };
 
 class DynamicEdgeDetector : public EdgeDetector
