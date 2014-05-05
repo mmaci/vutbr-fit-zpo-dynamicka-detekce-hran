@@ -47,6 +47,38 @@ void DynamicEdgeDetector::calcGradients() {
     } // WIDTH
 }
 
+template<typename T>
+T DynamicEdgeDetector::getCost(uint32_t index, uint32_t disc, PixelType type) const {
+    T cost = 0;
+    switch (type) {
+        case RGB:
+        {
+            for (uint8_t channel = RED; channel < NUM_CHANNELS; ++channel) {
+
+                int32_t intensity = _intensities[index * 3 + channel];
+                int32_t gradient = _gradients[index * 3 + channel];
+
+                cost += C_DISCONTINUITY * disc - C_GRADIENT * gradient - C_INTENSITY * intensity;
+            }
+            break;
+        }
+
+        default:
+            break;
+    }
+    return cost;
+}
+
+template<typename T>
+std::pair<uint32_t, T> DynamicEdgeDetector::getCost(uint32_t x, uint32_t y, uint32_t disc, PixelType type) const {
+    uint32_t index = getHeight() * x + y;
+    int32_t cost = getCost<int32_t>(index, disc, RGB);
+
+    return std::pair<uint32_t, T>(index, cost);
+}
+
+
+
 void DynamicEdgeDetector::forwardScan() {
     for (uint32_t x = 0; x < getWidth() - 1; ++x) {
         for (uint32_t y = 0; y < getHeight(); ++y) {
@@ -55,24 +87,17 @@ void DynamicEdgeDetector::forwardScan() {
             uint32_t minIndex;
 
             for (int8_t i = -2; i <= 2; ++i) {
-                int32_t cost = 0;
+
                 uint32_t Y = std::min(std::max(0, static_cast<int32_t>(y + i)), static_cast<int32_t>(getHeight() - 1));
                 uint32_t X = x + 1;
-                int32_t disc = abs(i);
 
-                uint32_t index = getHeight() * X + Y;
+                uint32_t disc = abs(i);
 
-                for (uint8_t channel = RED; channel < NUM_CHANNELS; ++channel) {
+                std::pair<uint32_t, int32_t> cost = getCost<int32_t>(X, Y, disc, RGB);
 
-                    int32_t intensity = _intensities[index * 3 + channel];
-                    int32_t gradient = _gradients[index * 3 + channel];
-
-                    cost += C_DISCONTINUITY * disc - C_GRADIENT * gradient - C_INTENSITY * intensity;
-                }
-
-                if (cost < minCost) {
-                    minIndex = index;
-                    minCost = cost;
+                if (cost.second < minCost) {
+                    minIndex = cost.first;
+                    minCost = cost.second;
                 }
 
                 _fwdScanPtrs[getHeight() * x + y] = minIndex;

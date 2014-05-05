@@ -22,6 +22,12 @@ enum Colors {
     BLUE
 };
 
+enum PixelType {
+    RGB,
+    CMYK,
+    GRAYSCALE
+};
+
 class DynamicEdgeDetector : public EdgeDetector
 {
     public:
@@ -33,6 +39,12 @@ class DynamicEdgeDetector : public EdgeDetector
         void calcGradients();
         void forwardScan();
         void backwardTrack();
+
+        template <typename T>
+        T getCost(uint32_t index, uint32_t disc, PixelType type) const;
+
+        template <typename T>
+        std::pair<uint32_t, T> getCost(uint32_t x, uint32_t y, uint32_t disc, PixelType type) const;
 
         uint32_t getWidth() const { return _width; }
         uint32_t getHeight() const { return _height; }
