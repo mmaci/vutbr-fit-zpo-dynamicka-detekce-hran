@@ -27,14 +27,14 @@ enum Colors {
 };
 
 enum PixelType {
-    RGB,
+    RGB=0,
     CMYK,
     GRAYSCALE,
-    MYTEST
+    ORIGIN
 };
 
 enum DetectionMethod {
-    HORIZONTAL,
+    HORIZONTAL=0,
     VERTICAL
 };
 
@@ -44,11 +44,11 @@ class DynamicEdgeDetector : public EdgeDetector
         DynamicEdgeDetector() { }
         DynamicEdgeDetector(QImage* image, uint32_t const& width, uint32_t const& height);
 
-        void calc(DetectionMethod method);
-        void calcIntensities(DetectionMethod method);
-        void calcGradients(DetectionMethod method);
-        void forwardScan(DetectionMethod method);
-        void backwardTrack(DetectionMethod method);
+        void calc();
+        void calcIntensities();
+        void calcGradients();
+        void forwardScan();
+        void backwardTrack();
         void backwardTrackEdge(uint32_t const& startX, uint32_t const& startY);
 
         template <typename T>
@@ -63,12 +63,20 @@ class DynamicEdgeDetector : public EdgeDetector
 
         uint32_t getWidth() const { return _width; }
         uint32_t getHeight() const { return _height; }
-
+        void setType(PixelType value);
+        void setMethod(DetectionMethod value);
+        void setThreshold(int32_t value);
+        void setColor(QRgb value){_edgeColor = value; }
     private:
         std::vector<int32_t> _intensities;
         std::vector<int32_t> _gradients;
         std::vector<int32_t> _ptrs;
         std::vector<int32_t> _accumulated;
+
+        PixelType _type;
+        DetectionMethod _method;
+        int32_t _threshold;
+        QRgb _edgeColor;
 
         uint32_t _width;
         uint32_t _height;

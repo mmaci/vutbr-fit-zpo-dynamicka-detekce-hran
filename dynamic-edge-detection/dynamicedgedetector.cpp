@@ -13,25 +13,29 @@ DynamicEdgeDetector::DynamicEdgeDetector(QImage* image, uint32_t const& width, u
     _intensities = std::vector<int32_t>(width * height * 3, 0);
     _ptrs = std::vector<int32_t>(width * height, UNDEFINED);
     _accumulated = std::vector<int32_t>(width * height, 0);
+    _type = RGB;
+    _method = HORIZONTAL;
+    _threshold = 1;
+    _edgeColor = qRgb(0,0,0);
 }
 
-void DynamicEdgeDetector::calc(DetectionMethod method) {
-    calcIntensities(method);
-    calcGradients(method);
-    forwardScan(method);
+void DynamicEdgeDetector::calc() {
+    calcIntensities();
+    calcGradients();
+    forwardScan();
 }
 
-void DynamicEdgeDetector::calcIntensities(DetectionMethod method) {
+void DynamicEdgeDetector::calcIntensities() {
     #ifdef DEBUG
         std::cout << "Calculating intensities ..." << std::endl;
         uint32_t startTime = GetTickCount();
     #endif
-    switch (method) {
+    switch (_method) {
         case HORIZONTAL:
         {
             for (uint32_t x = 0; x < getWidth(); ++x) {
                 for (uint32_t y = 0; y < getHeight(); ++y) {
-                        int32_t op = min(NUM_INTENSITIES, static_cast<int32_t>(getHeight() - 1) - static_cast<int32_t>(y));
+                        int32_t op = qMin(NUM_INTENSITIES, static_cast<int32_t>(getHeight() - 1) - static_cast<int32_t>(y));
                         for (uint8_t i = 0; i < op; ++i) {
                             QColor color = getImage()->pixel(x, y + i);
                             uint32_t index = getIndex(x, y);
@@ -48,7 +52,7 @@ void DynamicEdgeDetector::calcIntensities(DetectionMethod method) {
             for (uint32_t x = 0; x < getWidth(); ++x) {
                 for (uint32_t y = 0; y < getHeight(); ++y) {
                         for (uint8_t i = 0; i < NUM_INTENSITIES; ++i) {
-                            QColor color = getImage()->pixel(min(max(static_cast<uint32_t>(0), static_cast<uint32_t>(x + i)), getWidth()-1), y);
+                            QColor color = getImage()->pixel(qMin(qMax(static_cast<uint32_t>(0), static_cast<uint32_t>(x + i)), getWidth()-1), y);
                             uint32_t index = getIndex(x, y);
                             _intensities[index * 3] += color.red();
                             _intensities[index * 3 + 1] += color.green();
@@ -66,20 +70,20 @@ void DynamicEdgeDetector::calcIntensities(DetectionMethod method) {
     #endif
 }
 
-void DynamicEdgeDetector::calcGradients(DetectionMethod method) {
+void DynamicEdgeDetector::calcGradients() {
     #ifdef DEBUG
         std::cout << "Calculating gradients ..." << std::endl;
         uint32_t startTime = GetTickCount();
     #endif
 
-    switch (method) {
+    switch (_method) {
         case HORIZONTAL:
         {
             for (uint32_t x = 0; x < getWidth(); ++x) {
                 for (uint32_t y = 0; y < getHeight(); ++y) {
                     uint32_t index = getIndex(x, y);
                     for (int8_t i = -1; i <= 1; i += 2) {
-                        uint32_t Y = min(max(0, static_cast<int32_t>(y - i)), static_cast<int32_t>(getHeight() - 1));
+                        uint32_t Y = qMin(qMax(0, static_cast<int32_t>(y - i)), static_cast<int32_t>(getHeight() - 1));
                         QColor color = getImage()->pixel(x, Y);
                         _gradients[index * 3] += i * color.red();
                         _gradients[index * 3 + 1] += i * color.green();
@@ -95,7 +99,7 @@ void DynamicEdgeDetector::calcGradients(DetectionMethod method) {
                 for (uint32_t y = 0; y < getHeight(); ++y) {
                     uint32_t index = getIndex(x, y);
                     for (int8_t i = -1; i <= 1; i += 2) {
-                        uint32_t X = min(max(0, static_cast<int32_t>(x - i)), static_cast<int32_t>(getWidth() - 1));
+                        uint32_t X = qMin(qMax(0, static_cast<int32_t>(x - i)), static_cast<int32_t>(getWidth() - 1));
                         QColor color = getImage()->pixel(X, y);
                         _gradients[index * 3] += i * color.red();
                         _gradients[index * 3 + 1] += i * color.green();
@@ -147,19 +151,19 @@ std::pair<uint32_t, T> DynamicEdgeDetector::getCost(uint32_t const& x, uint32_t 
 
 
 
-void DynamicEdgeDetector::forwardScan(DetectionMethod method) {
+void DynamicEdgeDetector::forwardScan() {
 
     #ifdef DEBUG
         std::cout << "Forward scanning ..." << std::endl;
         uint32_t startTime = GetTickCount();
     #endif
 
-    switch (method) {
+    switch (_method) {
         case HORIZONTAL:
         {
             // calc first layer
             for (uint32_t y = 0; y < getHeight(); ++y) {
-                std::pair<uint32_t, int32_t> cost = getCost<int32_t>(0, y);
+                std::pair<uint32_t, int32_t> cost = getCost<int32_t>(0, y, 0, _type);
                 _accumulated[y] = cost.second;
             }
 
@@ -168,26 +172,25 @@ void DynamicEdgeDetector::forwardScan(DetectionMethod method) {
 
                     int32_t minCost = INT_MAX;
                     uint32_t minIndex;
-                    std::pair<uint32_t, int32_t> curCost = getCost<int32_t>(x, y);
+                    std::pair<uint32_t, int32_t> curCost = getCost<int32_t>(x, y, 0, _type);
 
                     for (int8_t i = -2; i <= 2; ++i) {
 
-                        uint32_t Y = min(max(0, static_cast<int32_t>(y + i)), static_cast<int32_t>(getHeight() - 1));
+                        uint32_t Y = qMin(qMax(0, static_cast<int32_t>(y + i)), static_cast<int32_t>(getHeight() - 1));
                         uint32_t X = x - 1;
                         uint32_t disc = abs(i);
 
-                        std::pair<uint32_t, int32_t> cost = getCost<int32_t>(X, Y, disc, RGB);
+                        std::pair<uint32_t, int32_t> cost = getCost<int32_t>(X, Y, disc, _type);
 
                         if (cost.second < minCost) {
                             minIndex = cost.first;
                             minCost = cost.second;
                         }
-
-                        uint32_t index = getIndex(x, y);
-
-                        _ptrs[index] = static_cast<int32_t>(minIndex);
-                        _accumulated[index] = minCost + curCost.second;
                     }
+                    uint32_t index = getIndex(x, y);
+
+                    _ptrs[index] = static_cast<int32_t>(minIndex);
+                    _accumulated[index] = minCost + curCost.second;
 
                 } // HEIGHT
             } // WIDTH
@@ -198,7 +201,7 @@ void DynamicEdgeDetector::forwardScan(DetectionMethod method) {
         {
             // calc first layer
             for (uint32_t x = 0; x < getWidth(); ++x) {
-                std::pair<uint32_t, int32_t> cost = getCost<int32_t>(x, 0);
+                std::pair<uint32_t, int32_t> cost = getCost<int32_t>(x, 0, 0, _type);
                 _accumulated[getIndex(x, 0)] = cost.second;
             }
 
@@ -207,26 +210,26 @@ void DynamicEdgeDetector::forwardScan(DetectionMethod method) {
 
                     int32_t minCost = INT_MAX;
                     uint32_t minIndex;
-                    std::pair<uint32_t, int32_t> curCost = getCost<int32_t>(x, y);
+                    std::pair<uint32_t, int32_t> curCost = getCost<int32_t>(x, y, 0, _type);
 
                     for (int8_t i = -2; i <= 2; ++i) {
 
-                        uint32_t X = min(max(0, static_cast<int32_t>(x + i)), static_cast<int32_t>(getWidth() - 1));
+                        uint32_t X = qMin(qMax(0, static_cast<int32_t>(x + i)), static_cast<int32_t>(getWidth() - 1));
                         uint32_t Y = y - 1;
                         uint32_t disc = abs(i);
 
-                        std::pair<uint32_t, int32_t> cost = getCost<int32_t>(X, Y, disc, RGB);
+                        std::pair<uint32_t, int32_t> cost = getCost<int32_t>(X, Y, disc, _type);
 
                         if (cost.second < minCost) {
                             minIndex = cost.first;
                             minCost = cost.second;
                         }
-
-                        uint32_t index = getIndex(x, y);
-
-                        _ptrs[index] = static_cast<int32_t>(minIndex);
-                        _accumulated[index] = minCost + curCost.second;
                     }
+                    uint32_t index = getIndex(x, y);
+
+                    _ptrs[index] = static_cast<int32_t>(minIndex);
+                    _accumulated[index] = minCost + curCost.second;
+
 
                 } // HEIGHT
             } // WIDTH
@@ -242,7 +245,7 @@ void DynamicEdgeDetector::forwardScan(DetectionMethod method) {
 
 // TODO: rewrite this to work dynamically
 // this is just a temporary for one edge to detect
-void DynamicEdgeDetector::backwardTrack(DetectionMethod method) {
+void DynamicEdgeDetector::backwardTrack() {
 
     #ifdef DEBUG
         std::cout << "Backward tracking ..." << std::endl;
@@ -250,7 +253,7 @@ void DynamicEdgeDetector::backwardTrack(DetectionMethod method) {
     #endif;
 
     int32_t avg = 0;
-    switch (method) {
+    switch (_method) {
         case HORIZONTAL:
         {
             for (uint32_t y = 0; y < getHeight(); ++y) {
@@ -276,7 +279,7 @@ void DynamicEdgeDetector::backwardTrack(DetectionMethod method) {
             }
             avg /= getWidth();
 
-            avg/=2; // only trace edges from 25%
+            avg/=2;
             for (uint32_t x = 0; x < getWidth(); ++x) {
                 if (_accumulated[getIndex(x, getHeight()-1)] < avg) {
 
@@ -297,7 +300,7 @@ void DynamicEdgeDetector::backwardTrack(DetectionMethod method) {
 void DynamicEdgeDetector::backwardTrackEdge(uint32_t const& startX, uint32_t const& startY) {
 
     // edge color
-    QRgb color = qRgb(0, 255, 0);
+   QRgb color = _edgeColor;
 
     QImage* image = getImage();
 
@@ -310,5 +313,20 @@ void DynamicEdgeDetector::backwardTrackEdge(uint32_t const& startX, uint32_t con
         y_i = index % getHeight();
         x_i = index / getHeight();
     }
+}
+
+void DynamicEdgeDetector::setType(PixelType value)
+{
+    _type = value;
+}
+
+void DynamicEdgeDetector::setMethod(DetectionMethod value)
+{
+    _method = value;
+}
+
+void DynamicEdgeDetector::setThreshold(int32_t value)
+{
+    _threshold = value;
 }
 
