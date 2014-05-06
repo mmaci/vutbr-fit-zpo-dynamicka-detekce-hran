@@ -23,8 +23,8 @@ void MainWindow::on_pushButton_clicked()
 
     DynamicEdgeDetector det(&outImage, inImage.width(), inImage.height());
 
-    det.calc();
-    det.backwardTrack();
+    det.calc(VERTICAL);
+    det.backwardTrack(VERTICAL);
 
     /*
 

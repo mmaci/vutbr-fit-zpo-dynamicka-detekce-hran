@@ -12,6 +12,7 @@
 #define UNDEFINED -1
 
 const uint8_t NUM_CHANNELS = 3;
+const int32_t NUM_INTENSITIES = 4;
 
 // this should be obtained through training
 
@@ -32,17 +33,22 @@ enum PixelType {
     MYTEST
 };
 
+enum DetectionMethod {
+    HORIZONTAL,
+    VERTICAL
+};
+
 class DynamicEdgeDetector : public EdgeDetector
 {
     public:
         DynamicEdgeDetector() { }
         DynamicEdgeDetector(QImage* image, uint32_t const& width, uint32_t const& height);
 
-        void calc();
-        void calcIntensities();
-        void calcGradients();
-        void forwardScan();
-        void backwardTrack();
+        void calc(DetectionMethod method);
+        void calcIntensities(DetectionMethod method);
+        void calcGradients(DetectionMethod method);
+        void forwardScan(DetectionMethod method);
+        void backwardTrack(DetectionMethod method);
         void backwardTrackEdge(uint32_t const& startX, uint32_t const& startY);
 
         template <typename T>
