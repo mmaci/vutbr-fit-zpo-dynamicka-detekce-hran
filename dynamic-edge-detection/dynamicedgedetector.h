@@ -16,9 +16,10 @@ const int32_t NUM_INTENSITIES = 4;
 
 // this should be obtained through training
 
-const int32_t C_DISCONTINUITY = 1;
-const int32_t C_GRADIENT = 1;
-const int32_t C_INTENSITY = 1;
+const int32_t C_EDGE = 1;
+const int32_t C_GRAY_LEVEL = 1;
+
+const uint32_t C_RADIUS = 3;
 
 enum Colors {
     RED = 0,
@@ -27,14 +28,14 @@ enum Colors {
 };
 
 enum PixelType {
-    RGB=0,
+    RGB,
     CMYK,
     GRAYSCALE,
-    ORIGIN
+    MYTEST
 };
 
 enum DetectionMethod {
-    HORIZONTAL=0,
+    HORIZONTAL = 0,
     VERTICAL
 };
 
@@ -44,12 +45,22 @@ class DynamicEdgeDetector : public EdgeDetector
         DynamicEdgeDetector() { }
         DynamicEdgeDetector(QImage* image, uint32_t const& width, uint32_t const& height);
 
-        void calc();
-        void calcIntensities();
-        void calcGradients();
-        void forwardScan();
-        void backwardTrack();
+        void calc(DetectionMethod method);
+        void calcIntensities(DetectionMethod method);
+        void calcGradients(DetectionMethod method);
+        void forwardScan(DetectionMethod method);
+        void backwardTrack(DetectionMethod method);
         void backwardTrackEdge(uint32_t const& startX, uint32_t const& startY);
+
+        void calcCost(DetectionMethod method);
+        void calcCost(uint32_t x, uint32_t y, DetectionMethod method);
+
+        int32_t edgeStrength(uint32_t x, uint32_t y, DetectionMethod method);
+        int32_t getMaxGradMagnitude(DetectionMethod method);
+        int32_t getGradMagnitude(uint32_t x, uint32_t y, DetectionMethod method);
+
+        int32_t* getAverageIntensity(uint32_t x, uint32_t y, uint32_t radius);
+        int32_t grayDiff(uint32_t x, uint32_t y, uint32_t radius);
 
         template <typename T>
         T getCost(uint32_t const& index, uint32_t const& disc, PixelType const& type) const;
@@ -63,23 +74,19 @@ class DynamicEdgeDetector : public EdgeDetector
 
         uint32_t getWidth() const { return _width; }
         uint32_t getHeight() const { return _height; }
-        void setType(PixelType value);
-        void setMethod(DetectionMethod value);
-        void setThreshold(int32_t value);
-        void setColor(QRgb value){_edgeColor = value; }
+
     private:
         std::vector<int32_t> _intensities;
         std::vector<int32_t> _gradients;
         std::vector<int32_t> _ptrs;
         std::vector<int32_t> _accumulated;
 
-        PixelType _type;
-        DetectionMethod _method;
-        int32_t _threshold;
-        QRgb _edgeColor;
+        std::vector<int32_t> _cost;
 
         uint32_t _width;
         uint32_t _height;
+
+        int32_t _maxGradMagnitude[2];
 };
 
 #endif // DYNAMICEDGEDETECTOR_H
