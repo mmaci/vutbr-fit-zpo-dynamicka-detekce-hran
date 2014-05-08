@@ -317,7 +317,7 @@ void DynamicEdgeDetector::forwardScan() {
             _accumulated[getIndex(x, 0)] = cost.second;
         }
 
-        for (int32_t x = 0; x < getWidth(); ++x) {
+        for (uint32_t x = 0; x < getWidth(); ++x) {
             for (uint32_t y = 1; y < getHeight(); ++y) {
 
                 int32_t minCost = INT_MAX;
@@ -370,7 +370,7 @@ void DynamicEdgeDetector::forwardScan() {
 
 
         for (uint32_t x = 1; x < getPolarWidth(); ++x) {
-            for (int32_t y = 0; y < getPolarHeight(); ++y) {
+            for (uint32_t y = 0; y < getPolarHeight(); ++y) {
 
                 int32_t minCost = INT_MAX;
                 uint32_t minIndex;
@@ -563,8 +563,8 @@ QImage* DynamicEdgeDetector::makePolarImage() {
             float r = static_cast<float>(x);
             float angle = (y / static_cast<float>(heightTransform)) * M_PI * 2;
 
-            uint32_t xx = static_cast<uint32_t>(std::max(0.0, std::min(getWidth()-1.0, r * cos(angle) + centerX)));
-            uint32_t yy = static_cast<uint32_t>(std::max(0.0, std::min(getHeight()-1.0, r * sin(angle) + centerY)));
+            uint32_t xx = static_cast<uint32_t>(qMax(0.f, qMin(static_cast<float>(getWidth()-1.0), r * cos(angle) + centerX)));
+            uint32_t yy = static_cast<uint32_t>(qMax(0.f, qMin(static_cast<float>(getHeight()-1.0), r * sin(angle) + centerY)));
 
             polarImage->setPixel(x, y, originalImage->pixel(xx, yy));
             _cartesianToPolarTable[getPolarIndex(x, y)] = getIndex(xx, yy);
