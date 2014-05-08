@@ -19,10 +19,10 @@ enum Colors {
 };
 
 enum PixelType {
-    RGB=0,
+    GRADIENT=0,
     CMYK,
     GRAYSCALE,
-    ORIGIN
+    RGB
 };
 
 enum DetectionMethod {

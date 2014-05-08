@@ -33,7 +33,7 @@ void DynamicEdgeDetector2::forwardScan() {
         for (uint32_t x = 1; x < getWidth(); ++x) {
             for (uint32_t y = 0; y < getHeight(); ++y) {
 
-                int32_t minCost = INT_MAX;
+                uint32_t minCost = INT_MAX;
                 uint32_t minIndex;
                 for (int8_t i = -2; i <= 2; ++i) {
 
@@ -68,7 +68,7 @@ void DynamicEdgeDetector2::forwardScan() {
         for (uint32_t x = 0; x < getWidth(); ++x) {
             for (uint32_t y = 1; y < getHeight(); ++y) {
 
-                int32_t minCost = INT_MAX;
+                uint32_t minCost = INT_MAX;
                 uint32_t minIndex;
 
                 for (int8_t i = -2; i <= 2; ++i) {
@@ -94,6 +94,8 @@ void DynamicEdgeDetector2::forwardScan() {
         } // WIDTH
         break;
     }
+    case POLAR:
+    case MAX_METHODS:    break;
     }
 
 #ifdef DEBUG
@@ -147,7 +149,7 @@ void DynamicEdgeDetector2::backwardTrack() {
 #ifdef DEBUG
     std::cout << "Backward tracking ..." << std::endl;
     uint32_t startTime = GetTickCount();
-#endif;
+#endif
 
     switch (_method) {
     case HORIZONTAL:
@@ -155,7 +157,6 @@ void DynamicEdgeDetector2::backwardTrack() {
         for (uint32_t y= 0; y < getHeight(); y+=_threshold)
         {
             backwardTrackEdge(getWidth()-1, y);
-
         }
 
         break;
@@ -171,6 +172,7 @@ void DynamicEdgeDetector2::backwardTrack() {
         }
         break;
     }
+    case POLAR:break;
     }
 
 #ifdef DEBUG

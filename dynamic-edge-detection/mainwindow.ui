@@ -71,9 +71,9 @@
     <widget class="QComboBox" name="cbSmer">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>110</x>
        <y>70</y>
-       <width>131</width>
+       <width>141</width>
        <height>22</height>
       </rect>
      </property>
@@ -87,19 +87,24 @@
        <string>Shora dolů</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>Polární souřadnice</string>
+      </property>
+     </item>
     </widget>
     <widget class="QComboBox" name="cbCena">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>110</x>
        <y>30</y>
-       <width>131</width>
+       <width>141</width>
        <height>22</height>
       </rect>
      </property>
      <item>
       <property name="text">
-       <string>RGB</string>
+       <string>GRADIENT A INTENZITA</string>
       </property>
      </item>
      <item>
@@ -114,16 +119,16 @@
      </item>
      <item>
       <property name="text">
-       <string>PUVODNI</string>
+       <string>RGB</string>
       </property>
      </item>
     </widget>
     <widget class="QSlider" name="hsJemnost">
      <property name="geometry">
       <rect>
-       <x>119</x>
+       <x>109</x>
        <y>110</y>
-       <width>131</width>
+       <width>141</width>
        <height>22</height>
       </rect>
      </property>

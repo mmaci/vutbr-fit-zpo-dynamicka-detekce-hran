@@ -22,13 +22,15 @@ class DynamicEdgeDetector : public EdgeDetector
         void calcGradients();
         void forwardScan();
         void backwardTrack();
-        void backwardTrackEdge(uint32_t const& startX, uint32_t const& startY, bool polar = true);
+        void backwardTrackEdge(uint32_t const& startX, uint32_t const& startY);
 
         template <typename T>
-        T getCost(uint32_t const& index, uint32_t const& disc, PixelType const& type, bool polar) const;
+        T getCost(uint32_t const& index, uint32_t const& disc) const;
 
         template <typename T>
-        std::pair<uint32_t, T> getCost(uint32_t const& x, uint32_t const& y, uint32_t const& disc, PixelType const& type, bool polar) const;
+        std::pair<uint32_t, T> getCost(uint32_t const& x, uint32_t const& y, uint32_t const& disc) const;
+
+        uint32_t getDiff(uint32_t newX, uint32_t newY,uint32_t oldX,uint32_t oldY);
 
         uint32_t getIndex(uint32_t const& x, uint32_t const& y) const {
             return x * getHeight() + y;

@@ -35,7 +35,6 @@ class MainWindow : public QMainWindow
 
         void on_hsB_valueChanged(int value);
 
-        void on_imgVystup_customContextMenuRequested(const QPoint &pos);
 
 private:
         Ui::MainWindow *ui;

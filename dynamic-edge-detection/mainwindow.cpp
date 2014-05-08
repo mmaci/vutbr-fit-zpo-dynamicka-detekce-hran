@@ -35,58 +35,21 @@ void MainWindow::on_pushButton_clicked()
 
     outImage = inImage;//kvuli alokaci rozmeru - asi jde jinak
 
-    if(static_cast<PixelType>(ui->cbCena->currentIndex())== ORIGIN){
-        DynamicEdgeDetector det(&outImage, inImage.width(), inImage.height());
-
-        det.setType(RGB);
 
 
-        det.setMethod(POLAR);
-        //det.setThreshold(ui->hsJemnost->value());
-        ChangeColor();
-        det.setColor(edgEcolor);
+    DynamicEdgeDetector det(&outImage, inImage.width(), inImage.height());
 
-        det.calc();
-        det.backwardTrack();
-
-    }else
-    {
-        DynamicEdgeDetector2 det(&outImage, inImage.width(), inImage.height());
-
-        det.setType(static_cast<PixelType>(ui->cbCena->currentIndex()));
+    det.setType(static_cast<PixelType>(ui->cbCena->currentIndex()));
 
 
-        det.setMethod(static_cast<DetectionMethod>(ui->cbSmer->currentIndex()));
-        det.setThreshold(ui->hsJemnost->value());
-        ChangeColor();
-        det.setColor(edgEcolor);
+    det.setMethod(static_cast<DetectionMethod>(ui->cbSmer->currentIndex()));
+    det.setThreshold(ui->hsJemnost->value());
+    ChangeColor();
+    det.setColor(edgEcolor);
 
-        det.calc();
-        det.backwardTrack();
-    }
+    det.calc();
+    det.backwardTrack();
 
-    //det.backwardTrackEdge(inImage.width()/2, inImage.height()/2);
-
-
-
-    /*
-
-    for (uint8_t x = 0; x < inImage.width(); x++)
-    {
-        for(uint8_t y = 0; y < inImage.height(); y++)
-        {
-            QColor pixlik(inImage.pixel(x,y));
-            //tady nejaka funkce
-            //.........
-            int r,g,b;
-            r = 255 - pixlik.red();
-            g = 255 - pixlik.green();
-            b = 255 - pixlik.blue();
-            //.........
-            QColor vystup(r,g,b);
-            outImage.setPixel(x,y,vystup.rgb());
-        }
-    }*/
     QPixmap pix = QPixmap::fromImage(outImage);
     ui->imgVystup->setPixmap(pix.scaled(ui->imgVystup->width(),ui->imgVystup->height(),Qt::KeepAspectRatio));
     ui->actionUlozit->setEnabled(true);
@@ -135,7 +98,3 @@ void MainWindow::on_hsB_valueChanged(int value)
     ChangeColor();
 }
 
-void MainWindow::on_imgVystup_customContextMenuRequested(const QPoint &pos)
-{
-
-}
