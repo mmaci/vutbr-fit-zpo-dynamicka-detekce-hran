@@ -22,6 +22,8 @@ class DynamicEdgeDetector : public EdgeDetector
         void calcGradients();
         void forwardScan();
         void backwardTrack();
+        void backwardTrackGradient();
+        void backwardTrackOthers();
         void backwardTrackEdge(uint32_t const& startX, uint32_t const& startY);
 
         template <typename T>

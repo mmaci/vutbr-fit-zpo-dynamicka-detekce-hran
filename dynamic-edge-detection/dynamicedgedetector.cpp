@@ -420,9 +420,20 @@ void DynamicEdgeDetector::forwardScan() {
 #endif
 }
 
+void DynamicEdgeDetector::backwardTrack()
+{
+    if (_type==GRADIENT)
+    {
+        backwardTrackGradient();
+    }else
+    {
+        backwardTrackOthers();
+    }
+}
+
 // TODO: rewrite this to work dynamically
 // this is just a temporary for one edge to detect
-void DynamicEdgeDetector::backwardTrack() {
+void DynamicEdgeDetector::backwardTrackGradient() {
 
 #ifdef DEBUG
     std::cout << "Backward tracking ..." << std::endl;
@@ -477,10 +488,50 @@ void DynamicEdgeDetector::backwardTrack() {
         avg/=2; // only trace edges from 25%
         for (uint32_t y = 0; y < getPolarHeight(); ++y) {
             if (_accumulated[getPolarIndex(getPolarWidth()-1, y)] < avg) {
-
                 backwardTrackEdge(getPolarWidth()-1, y);
-
             }
+        }
+        break;
+    }
+    case MAX_METHODS: break;
+    }
+
+#ifdef DEBUG
+    uint32_t diff = GetTickCount() - startTime;
+    std::cout << "Finished in " << diff << "ms." << std::endl;
+#endif
+}
+
+void DynamicEdgeDetector::backwardTrackOthers()
+{
+
+#ifdef DEBUG
+    std::cout << "Backward tracking ..." << std::endl;
+    uint32_t startTime = GetTickCount();
+#endif
+    switch (_method) {
+    case HORIZONTAL:
+    {
+
+        for (uint32_t y = 0; y < getHeight(); ++y) {
+            backwardTrackEdge(getWidth()-1, y);
+        }
+        break;
+    }
+
+    case VERTICAL:
+    {
+
+        for (uint32_t x = 0; x < getWidth(); ++x) {
+            backwardTrackEdge(x, getHeight()-1);
+        }
+        break;
+    }
+
+    case POLAR:
+    {
+        for (uint32_t y = 0; y < getPolarHeight(); ++y) {
+            backwardTrackEdge(getPolarWidth()-1, y);
         }
         break;
     }

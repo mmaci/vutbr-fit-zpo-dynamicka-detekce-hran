@@ -50,6 +50,7 @@ void MainWindow::on_pushButton_clicked()
     det.calc();
     det.backwardTrack();
 
+
     QPixmap pix = QPixmap::fromImage(outImage);
     ui->imgVystup->setPixmap(pix.scaled(ui->imgVystup->width(),ui->imgVystup->height(),Qt::KeepAspectRatio));
     ui->actionUlozit->setEnabled(true);
