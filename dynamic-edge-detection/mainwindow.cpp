@@ -41,7 +41,7 @@ void MainWindow::on_pushButton_clicked()
         det.setType(RGB);
 
 
-        det.setMethod(static_cast<DetectionMethod>(ui->cbSmer->currentIndex()));
+        det.setMethod(POLAR);
         //det.setThreshold(ui->hsJemnost->value());
         ChangeColor();
         det.setColor(edgEcolor);

@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <cstdint>
 
+#include "constants.h"
 #include "dynamicedgedetector.h"
 #include "dynamicedgedetector2.h"
 

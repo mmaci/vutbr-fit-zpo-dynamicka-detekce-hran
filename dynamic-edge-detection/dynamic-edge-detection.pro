@@ -14,12 +14,15 @@ QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    dynamicedgedetector.cpp \
-    dynamicedgedetector2.cpp
+dynamicedgedetector2.cpp \
+    dynamicedgedetector.cpp
+
 
 HEADERS  += mainwindow.h \
     edgedetector.h \
+dynamicedgedetector2.h \
     dynamicedgedetector.h \
-    dynamicedgedetector2.h
+    constants.h
+
 
 FORMS    += mainwindow.ui

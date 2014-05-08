@@ -6,8 +6,11 @@
 #include <cstdint>
 #include <cmath>
 #include <stdint.h>
+#include <iostream>
+#include <Windows.h>
 
-#include "dynamicedgedetector.h"
+#include "constants.h"
+#include "edgedetector.h"
 
 class DynamicEdgeDetector2 : public EdgeDetector
 {

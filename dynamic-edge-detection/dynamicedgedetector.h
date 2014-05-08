@@ -9,34 +9,7 @@
 
 #include "edgedetector.h"
 
-#define UNDEFINED -1
-
-const uint8_t NUM_CHANNELS = 3;
-const int32_t NUM_INTENSITIES = 4;
-
-// this should be obtained through training
-
-const int32_t C_DISCONTINUITY = 1;
-const int32_t C_GRADIENT = 1;
-const int32_t C_INTENSITY = 1;
-
-enum Colors {
-    RED = 0,
-    GREEN,
-    BLUE
-};
-
-enum PixelType {
-    RGB=0,
-    CMYK,
-    GRAYSCALE,
-    ORIGIN
-};
-
-enum DetectionMethod {
-    HORIZONTAL=0,
-    VERTICAL
-};
+#include "constants.h"
 
 class DynamicEdgeDetector : public EdgeDetector
 {
@@ -49,20 +22,32 @@ class DynamicEdgeDetector : public EdgeDetector
         void calcGradients();
         void forwardScan();
         void backwardTrack();
-        void backwardTrackEdge(uint32_t const& startX, uint32_t const& startY);
+        void backwardTrackEdge(uint32_t const& startX, uint32_t const& startY, bool polar = true);
 
         template <typename T>
-        T getCost(uint32_t const& index, uint32_t const& disc, PixelType const& type) const;
+        T getCost(uint32_t const& index, uint32_t const& disc, PixelType const& type, bool polar) const;
 
         template <typename T>
-        std::pair<uint32_t, T> getCost(uint32_t const& x, uint32_t const& y, uint32_t const& disc, PixelType const& type) const;
+        std::pair<uint32_t, T> getCost(uint32_t const& x, uint32_t const& y, uint32_t const& disc, PixelType const& type, bool polar) const;
 
         uint32_t getIndex(uint32_t const& x, uint32_t const& y) const {
             return x * getHeight() + y;
         }
 
+        uint32_t getPolarIndex(uint32_t const& x, uint32_t const& y) const {
+            return x * getPolarHeight() + y;
+        }
+
+        QImage* makePolarImage();
+
+        QImage* getPolarImage() { return _polarImage; }
+
         uint32_t getWidth() const { return _width; }
         uint32_t getHeight() const { return _height; }
+
+        uint32_t getPolarWidth() const { return _polarWidth; }
+        uint32_t getPolarHeight() const { return _polarHeight; }
+
         void setType(PixelType value);
         void setMethod(DetectionMethod value);
         void setThreshold(int32_t value);
@@ -72,6 +57,7 @@ class DynamicEdgeDetector : public EdgeDetector
         std::vector<int32_t> _gradients;
         std::vector<int32_t> _ptrs;
         std::vector<int32_t> _accumulated;
+        std::vector<int32_t> _cartesianToPolarTable;
 
         PixelType _type;
         DetectionMethod _method;
@@ -80,6 +66,11 @@ class DynamicEdgeDetector : public EdgeDetector
 
         uint32_t _width;
         uint32_t _height;
+
+        uint32_t _polarWidth;
+        uint32_t _polarHeight;
+
+        QImage* _polarImage;
 };
 
 #endif // DYNAMICEDGEDETECTOR_H
