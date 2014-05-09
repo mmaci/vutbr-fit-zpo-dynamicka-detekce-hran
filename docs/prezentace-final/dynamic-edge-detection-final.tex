@@ -76,14 +76,14 @@ Postup je znázorněn odzdola nahoru, ale je možné postupovat jakýmkoliv jin�
 
 		Zbývající část optimální strategie je rovněž optimální, pokud proces začíná ve stavu, do kterého se dostal v důsledku použití optimální strategie.
 			
-		\centering{		
+		\begin{center}		
 	\begin{figure}[h!]
 	
 
 	\includegraphics[height=33mm]{bellman-opt.pdf}
 	\caption{\scriptsize{Je-li cesta z \textbf{A} do \textbf{C} optimální, pak existuje i cesta z \textbf{B} do \textbf{C}}}
 		\end{figure}					  		
-		}
+		\end{center}
 	\end{frame}
 	
 	
@@ -104,9 +104,9 @@ Postup je znázorněn odzdola nahoru, ale je možné postupovat jakýmkoliv jin�
 
 		$$ E_{sum} = C_{discont}E_{discont}(p_{i-1},p_{i})-C_{int}E_{int}(p_{i})-C_{grad}E_{grad}(p_{i}) $$
 		
-		E \ldots jednotlivé cenové funkce \\
-		C \ldots váhy pro dané funkce \\
-		p_{i} \ldots pixel
+		$E$ \ldots jednotlivé cenové funkce \\
+		$C$ \ldots váhy pro dané funkce \\
+		$p_{i}$ \ldots pixel
 		
 		\vspace{5mm}\centering
 		\begin{tabular}{lll}
@@ -153,30 +153,34 @@ Postup je znázorněn odzdola nahoru, ale je možné postupovat jakýmkoliv jin�
 	
 	\begin{frame}[t,fragile]
 		\frametitle{Výsledky lineární detekce hran}	
-\centering{
+\begin{center}
+
+
 		\begin{tabular}{lll}
 			\includegraphics[height=33mm]{300p-res.jpg} &		
 			\includegraphics[height=33mm]{res-left-right.jpg} &
 			\includegraphics[height=33mm]{res-top-bottom.jpg}
-		\end{tabular}		}
+		\end{tabular}		
+	\end{center}	
+	
 		
-\\		
-		
-\centering{\includegraphics[height=30mm]{fish.jpg}}
+\centering{\includegraphics[height=27mm]{fish.jpg}}
 		
 	\end{frame}
 	
-		\end{frame}
+
 	
 	\begin{frame}[t,fragile]
 		\frametitle{Výsledky polární detekce hran}	
-\centering{
+\begin{center}
+
+
 		\begin{tabular}{ll}
 			\includegraphics[height=60mm]{homer-polar.jpg} &		
 			\includegraphics[height=50mm]{skull.jpg}
-		\end{tabular}		}
-		
-\\		
+		\end{tabular}
+		\end{center}
+	
 		
 
 		
